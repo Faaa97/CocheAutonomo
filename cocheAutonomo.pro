@@ -27,13 +27,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     pairpoint.cpp \
-    myqgraphicsview.cpp
+    opcioneswindow.cpp
 
 HEADERS += \
         mainwindow.h \
     pairpoint.h \
     pairpoint.hpp \
-    myqgraphicsview.h
+    opcioneswindow.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    opcioneswindow.ui

@@ -7,12 +7,15 @@
 #include <QGraphicsScene>
 #include <vector>
 #include "pairpoint.hpp"
-#include "myqgraphicsview.h"
 #include <time.h>
 #include <cstdlib>
+#include "opcioneswindow.h"
+
+const int GRIDZ = -1.0;
 
 namespace Ui {
 class MainWindow;
+class OpcionesWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -36,18 +39,21 @@ private slots:
 
     void on_ValueFinY_valueChanged(int arg1);
 
-    void on_SliderObstaculos_valueChanged(int value);
-
     void on_ObstaculosAleatorios_toggled(bool checked);
 
     void resizeEvent(QResizeEvent *);
 
     void on_PorcentajeObstaculos_valueChanged(int arg1);
 
+    void on_actionOpciones_triggered();
+
+    void on_pushButton_released();
+
 private:
     Ui::MainWindow *ui;
+    Ui::OpcionesWindow *opciones;
     QGraphicsScene *scene;
-    std::vector<QGraphicsRectItem*> rectangles;
+    std::vector<QGraphicsRectItem*> gridRectangles;
     QGraphicsRectItem* inicio;
     QGraphicsRectItem* fin;
 
@@ -60,12 +66,27 @@ private:
     PairPoint inicioPoints;
     PairPoint finPoints;
 
+    PairPoint cochePoints;
+
     int obstaculosp;
     bool obstaculosAleatorios;
     bool obstaculosDefinidos;
 
+    void simulacion();
 
-    void RefreshGrid(bool hard_reset = true);
+public:
+    void defineGridPoints(int x, int y);
+    void defineInicioPoints(int x, int y);
+    void defineFinPoints(int x, int y);
+    void defineObstaculosP(int o);
+
+private:
+
+    void setGrid();
+    void RefreshGrid();
+
+    void setInicio();
+    void setFin();
     void RefreshPoints();
     void GenerarObstaculos();
 

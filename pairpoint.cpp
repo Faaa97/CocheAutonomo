@@ -9,6 +9,21 @@ PairPoint::PairPoint(int x, int y){
         undefined = false;
 }
 
+PairPoint PairPoint::operator=(const PairPoint& p){
+    this->setX(p.getX());
+    this->setY(p.getY());
+
+    return *this;
+}
+bool PairPoint::operator==(const PairPoint& p){
+    return p.getX() == this->getX() && p.getY() == this->getY();
+}
+bool PairPoint::operator<(const PairPoint& p){
+    if(p.getX() < this->getX()) return true;
+    else return p.getX() == this->getX() && p.getY() < this->getY();
+
+}
+
 void PairPoint::setX(int arg){
     x_ = arg;
     undefined = false;
@@ -17,12 +32,12 @@ void PairPoint::setY(int arg){
     y_ = arg;
     undefined = false;
 }
-int PairPoint::getX(){
+int PairPoint::getX()const{
     if(!undefined)
         return x_;
     return -2;
 }
-int PairPoint::getY(){
+int PairPoint::getY()const{
     if(!undefined)
         return y_;
     return -2;
