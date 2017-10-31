@@ -3,6 +3,9 @@
 PairPoint::PairPoint(int x, int y){
     x_ = x;
     y_ = y;
+    gScore = INF;
+    fScore = INF;
+    cameFrom = NULL;
     if((x == -1) && (y == -1))
         undefined = true;
     else
@@ -13,15 +16,19 @@ PairPoint PairPoint::operator=(const PairPoint& p){
     this->setX(p.getX());
     this->setY(p.getY());
 
+    this->gScore = p.getgScore();
+    this->fScore = p.getfScore();
+    this->cameFrom = p.getcameFrom();
+
     return *this;
 }
-bool PairPoint::operator==(const PairPoint& p){
+bool PairPoint::operator==(const PairPoint& p)const{
     return p.getX() == this->getX() && p.getY() == this->getY();
 }
-bool PairPoint::operator<(const PairPoint& p){
-    if(p.getX() < this->getX()) return true;
-    else return p.getX() == this->getX() && p.getY() < this->getY();
-
+bool PairPoint::operator<(const PairPoint& p)const{
+    if(p.getfScore() < this->getfScore()) return true;
+    else if(p.getfScore() == this->getfScore() && p.getX() < this->getX()) return true;
+    else return (p.getfScore() == this->getfScore()) && (p.getX() == this->getX()) && (p.getY() < this->getY());
 }
 
 void PairPoint::setX(int arg){
@@ -43,7 +50,27 @@ int PairPoint::getY()const{
     return -2;
 }
 
-
 bool PairPoint::isDefined(){
     return !undefined;
+}
+
+void PairPoint::setgScore(int g){
+    gScore = g;
+}
+int PairPoint::getgScore()const{
+    return gScore;
+}
+
+void PairPoint::setfScore(int f){
+    fScore = f;
+}
+int PairPoint::getfScore()const{
+    return fScore;
+}
+
+void PairPoint::setcameFrom(PairPoint* p){
+    cameFrom = p;
+}
+PairPoint* PairPoint::getcameFrom()const{
+    return cameFrom;
 }

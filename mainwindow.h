@@ -10,8 +10,12 @@
 #include <time.h>
 #include <cstdlib>
 #include "opcioneswindow.h"
+#include <set>
+#include <list>
+#include <iostream>
 
 const int GRIDZ = -1.0;
+//const int INF = 9999;
 
 namespace Ui {
 class MainWindow;
@@ -54,12 +58,14 @@ private:
     Ui::OpcionesWindow *opciones;
     QGraphicsScene *scene;
     std::vector<QGraphicsRectItem*> gridRectangles;
+    std::vector<PairPoint> gridNodes;
     QGraphicsRectItem* inicio;
     QGraphicsRectItem* fin;
+    QGraphicsRectItem* coche;
 
     std::vector<QGraphicsRectItem*> obstaculos;
     std::vector<PairPoint> obstaculosPoints;
-
+    std::vector<PairPoint> visitadosPoints;
 
     int gridSize;
     PairPoint gridPoints;
@@ -72,7 +78,13 @@ private:
     bool obstaculosAleatorios;
     bool obstaculosDefinidos;
 
-    void simulacion();
+    std::list<PairPoint*> AStar();
+
+    std::set<PairPoint*> closedSet;
+    std::set<PairPoint*> openSet;
+
+    std::vector<QGraphicsRectItem*> visitados;
+
 
 public:
     void defineGridPoints(int x, int y);
@@ -83,14 +95,20 @@ public:
 private:
 
     void setGrid();
-    void RefreshGrid();
+    void refreshGrid();
 
     void setInicio();
     void setFin();
-    void RefreshPoints();
+    void setObstaculos();
+    void setCoche();
+    void setVisitado();
+
     void GenerarObstaculos();
 
-    //void ObstacleCount();
+    int manhattanHeuristic(PairPoint node);
+    int searchlowestfScore();
+    std::list<PairPoint*> reconstructPath(PairPoint* current);
+    int searchCameFrom(PairPoint* node);
 
 };
 
