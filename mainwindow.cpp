@@ -7,12 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    //opciones(new Ui::MainWindow);
-    //opciones->setupUi(this);
     ui->setupUi(this);
+    opciones = new OpcionesWindow;
 
-
-    //connect(actionOpciones, SIGNAL(click()), this, SLOT(on_actionOpciones_triggered()));
+    connect(ui->actionOpciones, SIGNAL(triggered()), this, SLOT(on_actionOpciones_triggered()),Qt::UniqueConnection);
+    connect(ui->actionSalir, SIGNAL(triggered()), this, SLOT(on_actionSalir_triggered()));
+    connect(opciones, SIGNAL(accepted()),this, SLOT( opciones_accepted()));
 
     gridSize = 30;
     gridPoints.setX(10);
@@ -41,20 +41,48 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    if(opciones != NULL){
+        delete opciones;
+        opciones = NULL;
+    }
 }
 
-void MainWindow::on_ValueX_valueChanged(int arg1){
-    gridPoints.setX(arg1);
-    refreshGrid();
+void MainWindow::opciones_accepted(){
+
+    PairPoint newGrid = opciones->getGridPoints();
+    PairPoint newInicio = opciones->getInicioPoints();
+    PairPoint newFin = opciones->getFinPoints();
+    bool newObstaculosAleatorios = opciones->getObstaculosAleatorios();
+    int newObstaculosPorcentaje = opciones->getObstaculosPorcentaje();
+
+    if(gridPoints != newGrid){
+        gridPoints = newGrid;
+        refreshGrid();
+    }
+
+    if(inicioPoints != newInicio){
+        inicioPoints = newInicio;
+        setInicio();
+    }
+    if(finPoints != newFin){
+        finPoints = newFin;
+        setFin();
+    }
+    if(obstaculosAleatorios != newObstaculosAleatorios){
+        obstaculosAleatorios = newObstaculosAleatorios;
+        obstaculosDefinidos = false;
+        //volvemos a hacer los obstáculos
+    }
+    if(obstaculosp != newObstaculosPorcentaje){
+        obstaculosp = newObstaculosPorcentaje;
+        obstaculosDefinidos = false;
+        //volvemos a hacer los obstáculos
+    }
 }
 
-void MainWindow::on_ValueY_valueChanged(int arg1){
-    gridPoints.setY(arg1);
-    refreshGrid();
-}
 void MainWindow::setGrid(){
     scene = new QGraphicsScene(this);
-    ui->graphicsView->setAlignment(Qt::AlignTop|Qt::AlignLeft);
+    //ui->graphicsView->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     ui->graphicsView->setScene(scene);
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(1);
@@ -104,7 +132,6 @@ void MainWindow::setFin(){
     if( (finPoints.getX() > 0 && finPoints.getX() <= gridPoints.getX()) && (finPoints.getY() > 0 && finPoints.getY() <= gridPoints.getY()) )
         fin = scene->addRect((finPoints.getX()-1)*gridSize, (finPoints.getY()-1)*gridSize, gridSize-1, gridSize-1, QPen(Qt::red), QBrush(Qt::red));
 }
-
 
 void MainWindow::resizeEvent(QResizeEvent *){
     ui->graphicsView->setGeometry(0,0,this->width(),this->height()-gridSize);
@@ -175,70 +202,9 @@ void MainWindow::GenerarObstaculos(){
 
 }
 
-void MainWindow::on_ValueInicioX_valueChanged(int arg1)
-{
-    inicioPoints.setX(arg1);
-    setInicio();
-}
-
-void MainWindow::on_ValueInicioY_valueChanged(int arg1)
-{
-    inicioPoints.setY(arg1);
-    setInicio();
-}
-
-void MainWindow::on_ValueFinX_valueChanged(int arg1)
-{
-    finPoints.setX(arg1);
-    setFin();
-}
-
-void MainWindow::on_ValueFinY_valueChanged(int arg1)
-{
-    finPoints.setY(arg1);
-    setFin();
-}
-
-void MainWindow::on_ObstaculosAleatorios_toggled(bool checked)
-{
-    obstaculosAleatorios = checked;
-}
-
-
-void MainWindow::on_PorcentajeObstaculos_valueChanged(int arg1)
-{
-    obstaculosp = arg1;
-    if(obstaculosAleatorios)
-        setObstaculos();
-}
-
 void MainWindow::on_actionOpciones_triggered()
 {
-    //opciones = new OpcionesWindow;
-    //opciones->show();
-}
-
-void MainWindow::defineGridPoints(int x, int y){
-    gridPoints.setX(x);
-    gridPoints.setY(y);
-}
-void MainWindow::defineInicioPoints(int x, int y){
-    inicioPoints.setX(x);
-    inicioPoints.setY(y);
-}
-void MainWindow::defineFinPoints(int x, int y){
-    finPoints.setX(x);
-    finPoints.setY(y);
-}
-void MainWindow::defineObstaculosP(int o){
-    obstaculosp = o;
-}
-
-void MainWindow::on_pushButton_released()
-{
-    std::list<PairPoint*> caminoMinimo = AStar();
-    if(caminoMinimo.size() != 0);
-    //setCoche();
+    opciones->show();
 }
 
 std::list<PairPoint*> MainWindow::AStar(){
@@ -357,4 +323,15 @@ void MainWindow::setVisitado(){
     }
     for(unsigned i = 0; i < visitadosPoints.size(); i++)
         visitados.push_back(scene->addRect((visitadosPoints[i].getX()-1)*gridSize,(visitadosPoints[i].getY()-1)*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::yellow), QBrush(Qt::yellow)));
+}
+
+void MainWindow::on_actionSalir_triggered()
+{
+    QApplication::quit();
+}
+
+void MainWindow::on_actionStart_triggered(){
+    std::list<PairPoint*> caminoMinimo = AStar();
+    if(caminoMinimo.size() != 0){};
+    //setCoche();
 }

@@ -22,6 +22,11 @@ PairPoint PairPoint::operator=(const PairPoint& p){
 
     return *this;
 }
+
+bool PairPoint::operator!=(const PairPoint& p)const{
+    return !(*this == p);
+}
+
 bool PairPoint::operator==(const PairPoint& p)const{
     return p.getX() == this->getX() && p.getY() == this->getY();
 }

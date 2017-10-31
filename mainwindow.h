@@ -19,7 +19,7 @@ const int GRIDZ = -1.0;
 
 namespace Ui {
 class MainWindow;
-class OpcionesWindow;
+//class OpcionesWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -31,31 +31,20 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_ValueX_valueChanged(int arg1);
 
-    void on_ValueY_valueChanged(int arg1);
-
-    void on_ValueInicioX_valueChanged(int arg1);
-
-    void on_ValueInicioY_valueChanged(int arg1);
-
-    void on_ValueFinX_valueChanged(int arg1);
-
-    void on_ValueFinY_valueChanged(int arg1);
-
-    void on_ObstaculosAleatorios_toggled(bool checked);
+    void opciones_accepted();
 
     void resizeEvent(QResizeEvent *);
 
-    void on_PorcentajeObstaculos_valueChanged(int arg1);
-
     void on_actionOpciones_triggered();
 
-    void on_pushButton_released();
+    void on_actionSalir_triggered();
+
+    void on_actionStart_triggered();
 
 private:
     Ui::MainWindow *ui;
-    Ui::OpcionesWindow *opciones;
+    OpcionesWindow *opciones;
     QGraphicsScene *scene;
     std::vector<QGraphicsRectItem*> gridRectangles;
     std::vector<PairPoint> gridNodes;
@@ -84,13 +73,6 @@ private:
     std::set<PairPoint*> openSet;
 
     std::vector<QGraphicsRectItem*> visitados;
-
-
-public:
-    void defineGridPoints(int x, int y);
-    void defineInicioPoints(int x, int y);
-    void defineFinPoints(int x, int y);
-    void defineObstaculosP(int o);
 
 private:
 

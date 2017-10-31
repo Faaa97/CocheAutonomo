@@ -33,6 +33,7 @@ public:
     PairPoint* getcameFrom()const;
 
     PairPoint operator=(const PairPoint& p);
+    bool operator!=(const PairPoint& p)const;
     bool operator==(const PairPoint& p)const;
     bool operator<(const PairPoint& p)const;
 };
