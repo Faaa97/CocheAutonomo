@@ -8,6 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Coche Autónomo");
+    //this->
+
     opciones = new OpcionesWindow;
 
     connect(ui->actionOpciones, SIGNAL(triggered()), this, SLOT(on_actionOpciones_triggered()),Qt::UniqueConnection);
@@ -57,6 +60,7 @@ void MainWindow::opciones_accepted(){
 
     if(gridPoints != newGrid){
         gridPoints = newGrid;
+        obstaculosDefinidos = false;    //No tiene sentido seguir usando los mismos obstáculos
         refreshGrid();
     }
 
@@ -141,20 +145,7 @@ void MainWindow::setObstaculos(){
 
     if(!obstaculosDefinidos){
 
-        double numero = double(gridPoints.getX() * gridPoints.getY()) * double(obstaculosp)/100;
-        int cont = 0;
-
-        srand(time(NULL));
-
-        do{
-            int aux = (rand()*clock())% (gridPoints.getX()*gridPoints.getY());
-            int ini = inicioPoints.getX() + inicioPoints.getY()*gridPoints.getX();
-            int fi = finPoints.getX() + finPoints.getY()*gridPoints.getX();
-            if(!obstaculosPoints[aux].isDefined() && aux != ini && aux != fi){
-                obstaculosPoints[aux] = PairPoint(aux/gridPoints.getX(),aux%gridPoints.getX());
-                cont++;
-            }
-        }while(cont < numero);
+        GenerarObstaculos();
         obstaculosDefinidos = true;
     }
     else{
@@ -162,7 +153,6 @@ void MainWindow::setObstaculos(){
             delete obstaculos[i];
         obstaculos.resize(0);
     }
-
 
     for(unsigned i = 0; i < obstaculosPoints.size(); i++)
         if(obstaculosPoints[i].isDefined())

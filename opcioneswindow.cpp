@@ -37,7 +37,6 @@ int OpcionesWindow::getObstaculosPorcentaje(){
 
 void OpcionesWindow::on_buttonBox_accepted()
 {
-    emit SIGNAL(accepted());
 }
 
 void OpcionesWindow::on_buttonBox_rejected()
