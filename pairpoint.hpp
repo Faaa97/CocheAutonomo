@@ -11,6 +11,8 @@ private:
     int y_;
     bool undefined;
 
+    bool obstaculo_;
+
     int gScore;
     int fScore;
     PairPoint* cameFrom;
@@ -22,6 +24,8 @@ public:
     int getX()const;
     int getY()const;
     bool isDefined();
+    bool esObstaculo();
+    void setObstaculo(bool o);
 
     void setgScore(int g);
     int getgScore()const;

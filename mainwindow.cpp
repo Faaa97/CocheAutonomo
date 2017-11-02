@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Coche Autónomo");
-    //this->
 
     opciones = new OpcionesWindow;
 
@@ -20,10 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     gridSize = 30;
     gridPoints.setX(10);
     gridPoints.setY(10);
-    inicioPoints.setX(1);
-    inicioPoints.setY(1);
-    finPoints.setX(10);
-    finPoints.setY(10);
+    inicioPoints.setX(0);
+    inicioPoints.setY(0);
+    finPoints.setX(9);
+    finPoints.setY(9);
     obstaculosp = 0;
     obstaculosAleatorios = false;
     obstaculosDefinidos = false;
@@ -72,21 +71,18 @@ void MainWindow::opciones_accepted(){
         finPoints = newFin;
         setFin();
     }
-    if(obstaculosAleatorios != newObstaculosAleatorios){
+    if(obstaculosAleatorios != newObstaculosAleatorios || obstaculosp != newObstaculosPorcentaje){
         obstaculosAleatorios = newObstaculosAleatorios;
         obstaculosDefinidos = false;
+        if(obstaculosp != newObstaculosPorcentaje)
+            obstaculosp = newObstaculosPorcentaje;
         //volvemos a hacer los obstáculos
-    }
-    if(obstaculosp != newObstaculosPorcentaje){
-        obstaculosp = newObstaculosPorcentaje;
-        obstaculosDefinidos = false;
-        //volvemos a hacer los obstáculos
+        setObstaculos();
     }
 }
 
 void MainWindow::setGrid(){
     scene = new QGraphicsScene(this);
-    //ui->graphicsView->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     ui->graphicsView->setScene(scene);
     QPen outlinePen(Qt::black);
     outlinePen.setWidth(1);
@@ -94,7 +90,7 @@ void MainWindow::setGrid(){
     for(int i = 0; i < gridPoints.getX(); i++)
         for(int j = 0; j < gridPoints.getY(); j++){
             gridRectangles.push_back(scene->addRect(i*gridSize, j*gridSize, gridSize, gridSize, outlinePen, QBrush(Qt::white)));
-            gridNodes.push_back(PairPoint(i+1,j+1));
+            gridNodes.push_back(PairPoint(i,j));
         }
     for(unsigned i = 0; i < gridRectangles.size(); i++)
         gridRectangles[i]->setZValue(GRIDZ);
@@ -113,7 +109,7 @@ void MainWindow::refreshGrid(){
     for(int i = 0; i < gridPoints.getX(); i++)
         for(int j = 0; j < gridPoints.getY(); j++){
             gridRectangles.push_back(scene->addRect(i*gridSize, j*gridSize, gridSize, gridSize, outlinePen, QBrush(Qt::white)));
-            gridNodes.push_back(PairPoint(i+1,j+1));
+            gridNodes.push_back(PairPoint(i,j));
         }
     for(unsigned i = 0; i < gridRectangles.size(); i++)
         gridRectangles[i]->setZValue(GRIDZ);
@@ -124,8 +120,9 @@ void MainWindow::setInicio(){
         delete inicio;
         inicio = NULL;
     }
-    if( (inicioPoints.getX() > 0 && inicioPoints.getX() <= gridPoints.getX()) && (inicioPoints.getY() > 0 && inicioPoints.getY() <= gridPoints.getY()) )
-        inicio = scene->addRect((inicioPoints.getX()-1)*gridSize, (inicioPoints.getY()-1)*gridSize, gridSize-1, gridSize-1, QPen(Qt::blue), QBrush(Qt::blue));
+    if( (inicioPoints.getX() >= 0 && inicioPoints.getX() <= gridPoints.getX()) && (inicioPoints.getY() >= 0 && inicioPoints.getY() <= gridPoints.getY()) )
+        inicio = scene->addRect(inicioPoints.getX()*gridSize, inicioPoints.getY()*gridSize, gridSize-1, gridSize-1, QPen(Qt::blue), QBrush(Qt::blue));
+    inicio->setZValue(1);
 }
 
 void MainWindow::setFin(){
@@ -133,8 +130,9 @@ void MainWindow::setFin(){
         delete fin;
         fin = NULL;
     }
-    if( (finPoints.getX() > 0 && finPoints.getX() <= gridPoints.getX()) && (finPoints.getY() > 0 && finPoints.getY() <= gridPoints.getY()) )
-        fin = scene->addRect((finPoints.getX()-1)*gridSize, (finPoints.getY()-1)*gridSize, gridSize-1, gridSize-1, QPen(Qt::red), QBrush(Qt::red));
+    if( (finPoints.getX() >= 0 && finPoints.getX() <= gridPoints.getX()) && (finPoints.getY() >= 0 && finPoints.getY() <= gridPoints.getY()) )
+        fin = scene->addRect(finPoints.getX()*gridSize, finPoints.getY()*gridSize, gridSize-1, gridSize-1, QPen(Qt::red), QBrush(Qt::red));
+    fin->setZValue(1);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *){
@@ -158,6 +156,8 @@ void MainWindow::setObstaculos(){
         if(obstaculosPoints[i].isDefined())
             obstaculos.push_back(scene->addRect(obstaculosPoints[i].getX()*gridSize,obstaculosPoints[i].getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::black), QBrush(Qt::black)));
 
+    for(unsigned i = 0; i < obstaculos.size(); i++)
+        obstaculos[i]->setZValue(2);
 }
 
 void MainWindow::setCoche(){
@@ -168,7 +168,7 @@ void MainWindow::setCoche(){
     }
 
     if(cochePoints.isDefined())
-        coche = scene->addRect((cochePoints.getX()-1)*gridSize,(cochePoints.getY()-1)*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::green), QBrush(Qt::green));
+        coche = scene->addRect(cochePoints.getX()*gridSize,cochePoints.getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::green), QBrush(Qt::green));
     coche->setZValue(5);
 }
 
@@ -181,14 +181,18 @@ void MainWindow::GenerarObstaculos(){
 
     do{
         int aux = (rand()*clock())% (gridPoints.getX()*gridPoints.getY());
-        int ini = inicioPoints.getX() + inicioPoints.getY()*gridPoints.getX();
-        int fi = finPoints.getX() + finPoints.getY()*gridPoints.getX();
+        int ini = inicioPoints.getY() + inicioPoints.getX()*gridPoints.getX();
+        int fi = finPoints.getY() + finPoints.getX()*gridPoints.getX();
         if(!obstaculosPoints[aux].isDefined() && aux != ini && aux != fi){
-            obstaculosPoints[aux] = PairPoint(aux/gridPoints.getX(),aux%gridPoints.getX());
+            int x = aux/gridPoints.getX();
+            int y = aux%gridPoints.getX();
+            obstaculosPoints[aux] = PairPoint(x,y);
+            int index = y + x * gridPoints.getX();
+            printf("Haciendo obstáculo en (%d,%d)(%d) [%d,%d]\n",gridNodes[index].getX(),gridNodes[index].getY(),index,x,y);
+            gridNodes[index].setObstaculo(true);
             cont++;
         }
     }while(cont < numero);
-
 
 }
 
@@ -199,8 +203,8 @@ void MainWindow::on_actionOpciones_triggered()
 
 std::list<PairPoint*> MainWindow::AStar(){
 
-    int start = (inicioPoints.getY()-1)+(inicioPoints.getX()-1)*gridPoints.getX();
-    int fin = (finPoints.getY()-1)+(finPoints.getX()-1)*gridPoints.getX();
+    int start = inicioPoints.getY()+inicioPoints.getX()*gridPoints.getX();
+    int fin = finPoints.getY()+finPoints.getX()*gridPoints.getX();
 
     cochePoints = gridNodes[start];
     gridNodes[start].setgScore(0);
@@ -208,12 +212,13 @@ std::list<PairPoint*> MainWindow::AStar(){
     closedSet.clear();
 
     gridNodes[start].setfScore(manhattanHeuristic(gridNodes[start]));
-    std::cout << "inicio = (" << inicioPoints.getX() << "," << inicioPoints.getY() << ")" << std::endl;
-     std::cout << "FIN = (" << gridNodes[fin].getX() << "," << gridNodes[fin].getY() << ")" << std::endl;
+
     while(!openSet.empty()){
         PairPoint* current = *openSet.begin();
         if(current == &gridNodes[fin])
             return reconstructPath(current);
+        printf("Current: (%d,%d)\n",current->getX(),current->getY());
+        printf("Es obstaculo: %d\n",current->esObstaculo());
         openSet.erase(current);
         closedSet.insert(current);
 
@@ -221,45 +226,33 @@ std::list<PairPoint*> MainWindow::AStar(){
         setVisitado();
 
         std::vector<int> vecinos;
-        int aux = current->getX()-1 + (current->getY()-2)*gridPoints.getX();//Vecino superior
-        if(current->getX() > 0 && current->getY()-1 > 0)
+        int aux = current->getY() + (current->getX()-1) * gridPoints.getX();//Vecino superior
+        if(current->getY() >= 0 && current->getY() < gridPoints.getY() && current->getX()-1 >= 0 && current->getX()-1 < gridPoints.getX() && !current->esObstaculo())
             vecinos.push_back(aux);
-        aux = current->getX()-2 + (current->getY()-1)*gridPoints.getX();//Vecino izquierdo
-        if(current->getX()-1 > 0 && current->getY() > 0)
+        aux = current->getY()-1 + current->getX() * gridPoints.getX();//Vecino izquierdo
+        if(current->getY()-1 >= 0 && current->getY()-1 < gridPoints.getY() && current->getX() >= 0 && current->getX() < gridPoints.getX() && !current->esObstaculo())
             vecinos.push_back(aux);
-        aux = current->getX()-1 + current->getY()*gridPoints.getX();//Vecino inferior
-        if(current->getX() > 0 && current->getY()+1 > 0)
+        aux = current->getY() + (current->getX()+1) * gridPoints.getX();//Vecino inferior
+        if(current->getY() >= 0 && current->getY() < gridPoints.getY() && current->getX()+1 >= 0 && current->getX()+1 < gridPoints.getX() && !current->esObstaculo())
             vecinos.push_back(aux);
-        aux = current->getX() + (current->getY()-1)*gridPoints.getX();//Vecino derecho
-        if(current->getX()+1 > 0 && current->getY() > 0)
+        aux = current->getY()+1 + current->getX() * gridPoints.getX();//Vecino derecho
+        if(current->getY()+1 >= 0 && current->getY()+1 < gridPoints.getY() && current->getX() >= 0 && current->getX() < gridPoints.getX() && !current->esObstaculo())
             vecinos.push_back(aux);
-
-
-        std::cout<< "Vecinos("<< current->getX()<<","<<current->getY()<<") = " << vecinos.size() << std::endl;
-
 
         for(unsigned i = 0; i < vecinos.size(); i++){
-            std::cout <<"iter: " << i << std::endl;
-             std::cout <<"vecino" <<i<<": ("<< gridNodes[vecinos[i]].getX() <<","<<gridNodes[vecinos[i]].getY()<<")"<<std::endl;
+            if(closedSet.find(&gridNodes[vecinos[i]]) != closedSet.end())    //Si se encuentra en closedSet...
+                continue;
 
-            if(closedSet.find(&gridNodes[vecinos[i]]) != closedSet.end()){    //Si se encuentra en closedSet...
-                std::cout <<"Se encuentra en closedSet" << std::endl;
-                continue;
-            }
-            if(openSet.find(&gridNodes[vecinos[i]]) == openSet.end()){           //Si no se encuentra en openSet...
-                std::cout <<"No se encuentra en openSet" << std::endl;
+            if(openSet.find(&gridNodes[vecinos[i]]) == openSet.end())           //Si no se encuentra en openSet...
                 openSet.insert(&gridNodes[vecinos[i]]);
-            }
+
             int gScoreNew = current->getgScore() + 1; //La distancia entre un nodo y el vecino es de 1(m)
-            std::cout << "gScore: " << current->getgScore() << " new: " <<gScoreNew << std::endl;
-            if(gScoreNew >= gridNodes[vecinos[i]].getgScore()){
-                std::cout << "No es camino mínimo" << std::endl;
+            if(gScoreNew >= gridNodes[vecinos[i]].getgScore())
                 continue;
-            }
+
             gridNodes[vecinos[i]].setcameFrom(current);
             gridNodes[vecinos[i]].setgScore(gScoreNew);
             gridNodes[vecinos[i]].setfScore(gridNodes[vecinos[i]].getgScore() + manhattanHeuristic(gridNodes[vecinos[i]]));
-            std::cout << "Encontrado nuevo camino: iter: " << i << std::endl;
         }
     }
     return std::list<PairPoint*>(); //lista vacía, por que no hay camino mínimo
@@ -287,32 +280,12 @@ std::list<PairPoint*> MainWindow::reconstructPath(PairPoint* current){
     std::list<PairPoint*> caminoMinimo;
     caminoMinimo.push_back(current);
 
-    int aux = searchCameFrom(current);
-    while(aux != -1){
-        current = &gridNodes[aux];
-        caminoMinimo.push_back(current);
-        aux = searchCameFrom(current);
+    PairPoint* aux = current->getcameFrom();
+    while(aux != NULL){
+        caminoMinimo.push_back(aux);
+        aux = aux->getcameFrom();
     }
     return caminoMinimo;
-}
-
-int MainWindow::searchCameFrom(PairPoint* node){
-    for(unsigned i = 0; i < gridNodes.size(); i++){
-        if(gridNodes[i].getcameFrom() == node)
-            return i;
-    }
-    return -1;
-}
-
-void MainWindow::setVisitado(){
-
-    if(visitados.size() != 0){
-        for(unsigned i = 0; i < visitados.size(); i++)
-            delete visitados[i];
-        visitados.resize(0);
-    }
-    for(unsigned i = 0; i < visitadosPoints.size(); i++)
-        visitados.push_back(scene->addRect((visitadosPoints[i].getX()-1)*gridSize,(visitadosPoints[i].getY()-1)*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::yellow), QBrush(Qt::yellow)));
 }
 
 void MainWindow::on_actionSalir_triggered()
@@ -322,6 +295,36 @@ void MainWindow::on_actionSalir_triggered()
 
 void MainWindow::on_actionStart_triggered(){
     std::list<PairPoint*> caminoMinimo = AStar();
-    if(caminoMinimo.size() != 0){};
-    //setCoche();
+    if(caminoMinimo.size() != 0){
+        setCoche();
+        for(std::list<PairPoint*>::iterator it = caminoMinimo.begin(); it != caminoMinimo.end(); ++it){
+            scene->addRect((*it)->getX()*gridSize,(*it)->getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::magenta), QBrush(Qt::magenta));
+        }
+        for(std::list<PairPoint*>::reverse_iterator it = caminoMinimo.rbegin(); it != caminoMinimo.rend(); ++it){
+            delay(500);
+            cochePoints.setX((*it)->getX());
+            cochePoints.setY((*it)->getY());
+            setCoche();
+        }
+    }
+    printf("No hay camino mínimo\n");
+    //Si no hay camino mínimo, mostrar error
+}
+
+void MainWindow::delay(int msec){
+    QTime dieTime = QTime::currentTime().addMSecs(msec);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+
+void MainWindow::setVisitado(){
+
+    if(visitados.size() != 0){
+        for(unsigned i = 0; i < visitados.size(); i++)
+            delete visitados[i];
+        visitados.resize(0);
+    }
+    for(unsigned i = 0; i < visitadosPoints.size(); i++)
+        visitados.push_back(scene->addRect(visitadosPoints[i].getX()*gridSize,visitadosPoints[i].getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::yellow), QBrush(Qt::yellow)));
 }

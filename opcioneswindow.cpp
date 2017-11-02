@@ -8,8 +8,8 @@ OpcionesWindow::OpcionesWindow(QWidget *parent) :
     ui->setupUi(this);
 
     gridPoints = PairPoint(10,10);
-    inicioPoints = PairPoint(1,1);
-    finPoints = PairPoint(10,10);
+    inicioPoints = PairPoint(0,0);
+    finPoints = PairPoint(9,9);
     obstaculosAleatorios = true;
     obstaculosPorcentaje = 0;
 }
@@ -46,22 +46,22 @@ void OpcionesWindow::on_buttonBox_rejected()
 
 void OpcionesWindow::on_InicioX_valueChanged(int arg1)
 {
-    inicioPoints.setX(arg1);
+    inicioPoints.setX(arg1-1);
 }
 
 void OpcionesWindow::on_InicioY_valueChanged(int arg1)
 {
-    inicioPoints.setY(arg1);
+    inicioPoints.setY(arg1-1);
 }
 
 void OpcionesWindow::on_FinX_valueChanged(int arg1)
 {
-    finPoints.setX(arg1);
+    finPoints.setX(arg1-1);
 }
 
 void OpcionesWindow::on_FinY_valueChanged(int arg1)
 {
-    finPoints.setY(arg1);
+    finPoints.setY(arg1-1);
 }
 
 void OpcionesWindow::on_PorcentajeObstaculos_valueChanged(int arg1)

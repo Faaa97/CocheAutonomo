@@ -12,7 +12,9 @@
 #include "opcioneswindow.h"
 #include <set>
 #include <list>
-#include <iostream>
+//#include <iostream>
+#include <algorithm>    // std::sort
+#include <QTime>
 
 const int GRIDZ = -1.0;
 //const int INF = 9999;
@@ -83,15 +85,14 @@ private:
     void setFin();
     void setObstaculos();
     void setCoche();
-    void setVisitado();
 
     void GenerarObstaculos();
 
     int manhattanHeuristic(PairPoint node);
     int searchlowestfScore();
     std::list<PairPoint*> reconstructPath(PairPoint* current);
-    int searchCameFrom(PairPoint* node);
-
+    void delay(int msec);
+    void setVisitado();
 };
 
 #endif // MAINWINDOW_H

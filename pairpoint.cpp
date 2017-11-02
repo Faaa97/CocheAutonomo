@@ -6,6 +6,7 @@ PairPoint::PairPoint(int x, int y){
     gScore = INF;
     fScore = INF;
     cameFrom = NULL;
+    obstaculo_= false;
     if((x == -1) && (y == -1))
         undefined = true;
     else
@@ -28,7 +29,7 @@ bool PairPoint::operator!=(const PairPoint& p)const{
 }
 
 bool PairPoint::operator==(const PairPoint& p)const{
-    return p.getX() == this->getX() && p.getY() == this->getY();
+    return x_ == p.x_ && y_ == p.y_;
 }
 bool PairPoint::operator<(const PairPoint& p)const{
     if(p.getfScore() < this->getfScore()) return true;
@@ -78,4 +79,11 @@ void PairPoint::setcameFrom(PairPoint* p){
 }
 PairPoint* PairPoint::getcameFrom()const{
     return cameFrom;
+}
+
+bool PairPoint::esObstaculo(){
+    return obstaculo_;
+}
+void PairPoint::setObstaculo(bool o){
+    obstaculo_ = o;
 }
