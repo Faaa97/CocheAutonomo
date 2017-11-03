@@ -319,14 +319,15 @@ void MainWindow::on_actionStart_triggered(){
     }
     else{
         setCoche();
-        for(std::list<PairPoint*>::iterator it = caminoMinimo.begin(); it != caminoMinimo.end(); ++it){
+        for(std::list<PairPoint*>::reverse_iterator it = caminoMinimo.rbegin(); it != caminoMinimo.rend(); ++it){
             scene->addRect((*it)->getX()*gridSize,(*it)->getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::magenta), QBrush(Qt::magenta));
+            delay(delayTime/10);
         }
         for(std::list<PairPoint*>::reverse_iterator it = caminoMinimo.rbegin(); it != caminoMinimo.rend(); ++it){
-            delay(delayTime);
             cochePoints.setX((*it)->getX());
             cochePoints.setY((*it)->getY());
             setCoche();
+            delay(delayTime);
         }
     }
 
