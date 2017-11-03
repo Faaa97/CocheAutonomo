@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setInicio();
     setFin();
 
+    warning = NULL;
 }
 
 MainWindow::~MainWindow()
@@ -46,6 +47,10 @@ MainWindow::~MainWindow()
     if(opciones != NULL){
         delete opciones;
         opciones = NULL;
+    }
+    if(warning != NULL){
+        delete warning;
+        warning = NULL;
     }
 }
 
@@ -295,7 +300,17 @@ void MainWindow::on_actionSalir_triggered()
 
 void MainWindow::on_actionStart_triggered(){
     std::list<PairPoint*> caminoMinimo = AStar();
-    if(caminoMinimo.size() != 0){
+
+    if(caminoMinimo.size() == 0){
+        warning = new QMessageBox;
+        //warning->addButton(QMessageBox::Ok,QMessageBox::AcceptRole);
+        warning->setStandardButtons(QMessageBox::Ok);
+        warning->setIcon(QMessageBox::Warning);
+        warning->setText("No hay camino mínimo");
+        warning->setWindowTitle("Aviso");
+        warning->show();
+    }
+    else{
         setCoche();
         for(std::list<PairPoint*>::iterator it = caminoMinimo.begin(); it != caminoMinimo.end(); ++it){
             scene->addRect((*it)->getX()*gridSize,(*it)->getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::magenta), QBrush(Qt::magenta));
@@ -307,8 +322,7 @@ void MainWindow::on_actionStart_triggered(){
             setCoche();
         }
     }
-    printf("No hay camino mínimo\n");
-    //Si no hay camino mínimo, mostrar error
+
 }
 
 void MainWindow::delay(int msec){

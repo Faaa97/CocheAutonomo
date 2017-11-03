@@ -15,6 +15,7 @@
 //#include <iostream>
 #include <algorithm>    // std::sort
 #include <QTime>
+#include <QMessageBox>
 
 const int GRIDZ = -1.0;
 //const int INF = 9999;
@@ -53,6 +54,8 @@ private:
     QGraphicsRectItem* inicio;
     QGraphicsRectItem* fin;
     QGraphicsRectItem* coche;
+
+    QMessageBox* warning;
 
     std::vector<QGraphicsRectItem*> obstaculos;
     std::vector<PairPoint> obstaculosPoints;
