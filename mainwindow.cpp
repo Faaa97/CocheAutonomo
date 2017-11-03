@@ -83,9 +83,18 @@ void MainWindow::opciones_accepted(){
     if(obstaculosAleatorios != newObstaculosAleatorios || obstaculosp != newObstaculosPorcentaje){
         obstaculosAleatorios = newObstaculosAleatorios;
         obstaculosDefinidos = false;
+
         if(obstaculosp != newObstaculosPorcentaje)
             obstaculosp = newObstaculosPorcentaje;
-        //volvemos a hacer los obstáculos
+
+        for(unsigned i = 0; i < obstaculos.size(); i++)
+            delete obstaculos[i];
+        obstaculos.resize(0);
+        obstaculosPoints.resize(0);
+        obstaculosPoints.resize(gridPoints.getX()*gridPoints.getY());
+        for(unsigned i = 0; i < gridNodes.size(); i++)
+            gridNodes[i].setObstaculo(false);
+
         setObstaculos();
     }
 
