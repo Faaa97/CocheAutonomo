@@ -2,7 +2,6 @@
 #define OPCIONESWINDOW_H
 
 #include <QDialog>
-//#include "mainwindow.h"
 #include "pairpoint.hpp"
 
 namespace Ui {

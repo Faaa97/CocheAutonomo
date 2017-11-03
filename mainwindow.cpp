@@ -137,7 +137,7 @@ void MainWindow::setInicio(){
     }
     if( (inicioPoints.getX() >= 0 && inicioPoints.getX() <= gridPoints.getX()) && (inicioPoints.getY() >= 0 && inicioPoints.getY() <= gridPoints.getY()) )
         inicio = scene->addRect(inicioPoints.getX()*gridSize, inicioPoints.getY()*gridSize, gridSize-1, gridSize-1, QPen(Qt::blue), QBrush(Qt::blue));
-    inicio->setZValue(1);
+    inicio->setZValue(INICIOZ);
 }
 
 void MainWindow::setFin(){
@@ -147,7 +147,7 @@ void MainWindow::setFin(){
     }
     if( (finPoints.getX() >= 0 && finPoints.getX() <= gridPoints.getX()) && (finPoints.getY() >= 0 && finPoints.getY() <= gridPoints.getY()) )
         fin = scene->addRect(finPoints.getX()*gridSize, finPoints.getY()*gridSize, gridSize-1, gridSize-1, QPen(Qt::red), QBrush(Qt::red));
-    fin->setZValue(1);
+    fin->setZValue(INICIOZ);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *){
@@ -172,7 +172,7 @@ void MainWindow::setObstaculos(){
             obstaculos.push_back(scene->addRect(obstaculosPoints[i].getX()*gridSize,obstaculosPoints[i].getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::black), QBrush(Qt::black)));
 
     for(unsigned i = 0; i < obstaculos.size(); i++)
-        obstaculos[i]->setZValue(2);
+        obstaculos[i]->setZValue(OBSTACULOZ);
 }
 
 void MainWindow::setCoche(){
@@ -184,7 +184,7 @@ void MainWindow::setCoche(){
 
     if(cochePoints.isDefined())
         coche = scene->addRect(cochePoints.getX()*gridSize,cochePoints.getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::green), QBrush(Qt::green));
-    coche->setZValue(5);
+    coche->setZValue(COCHEZ);
 }
 
 void MainWindow::GenerarObstaculos(){

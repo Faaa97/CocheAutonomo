@@ -3,26 +3,20 @@
 
 #include <QMainWindow>
 #include <QGraphicsRectItem>
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <vector>
 #include "pairpoint.hpp"
 #include <time.h>
-#include <cstdlib>
 #include "opcioneswindow.h"
 #include <set>
-#include <list>
-//#include <iostream>
-#include <algorithm>    // std::sort
 #include <QTime>
 #include <QMessageBox>
 
-const int GRIDZ = -1.0;
-//const int INF = 9999;
+const int GRIDZ = -1;
+const int COCHEZ = 5;
+const int OBSTACULOZ = 2;
+const int INICIOZ = 1;
 
 namespace Ui {
 class MainWindow;
-//class OpcionesWindow;
 }
 
 class MainWindow : public QMainWindow
