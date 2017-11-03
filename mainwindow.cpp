@@ -246,6 +246,7 @@ std::list<PairPoint*> MainWindow::AStar(){
 
         visitadosPoints.push_back(PairPoint(current->getX(),current->getY()));
         setVisitado();
+        delay(delayTime/50);
 
         std::vector<int> vecinos;
         int aux = current->getY() + (current->getX()-1) * gridPoints.getX();//Vecino superior
@@ -358,4 +359,5 @@ void MainWindow::setVisitado(){
     }
     for(unsigned i = 0; i < visitadosPoints.size(); i++)
         visitados.push_back(scene->addRect(visitadosPoints[i].getX()*gridSize,visitadosPoints[i].getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::yellow), QBrush(Qt::yellow)));
+
 }
