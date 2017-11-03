@@ -23,6 +23,7 @@ public:
     bool getObstaculosAleatorios();
     int getObstaculosPorcentaje();
     int getDelayTime();
+    bool getMostrarVisitados();
 
 private slots:
     void on_buttonBox_accepted();
@@ -45,6 +46,8 @@ private slots:
 
     void on_Velocidad_valueChanged(int arg1);
 
+    void on_checkBox_toggled(bool checked);
+
 private:
     Ui::OpcionesWindow *ui;
 
@@ -55,6 +58,7 @@ private:
     int obstaculosPorcentaje;
     bool obstaculosAleatorios;
     int delayTime;
+    bool mostrarVisitados;
 };
 
 #endif // OPCIONESWINDOW_H

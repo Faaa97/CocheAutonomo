@@ -13,6 +13,7 @@ OpcionesWindow::OpcionesWindow(QWidget *parent) :
     obstaculosAleatorios = true;
     obstaculosPorcentaje = 0;
     delayTime = 500;
+    mostrarVisitados = true;
 }
 
 OpcionesWindow::~OpcionesWindow()
@@ -38,6 +39,10 @@ int OpcionesWindow::getObstaculosPorcentaje(){
 
 int OpcionesWindow::getDelayTime(){
     return delayTime;
+}
+
+bool OpcionesWindow::getMostrarVisitados(){
+    return mostrarVisitados;
 }
 
 void OpcionesWindow::on_buttonBox_accepted()
@@ -87,4 +92,9 @@ void OpcionesWindow::on_GridY_valueChanged(int arg1)
 void OpcionesWindow::on_Velocidad_valueChanged(int arg1)
 {
     delayTime = arg1;
+}
+
+void OpcionesWindow::on_checkBox_toggled(bool checked)
+{
+    mostrarVisitados = checked;
 }

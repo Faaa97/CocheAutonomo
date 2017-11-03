@@ -80,6 +80,7 @@ private:
     std::vector<QGraphicsRectItem*> visitados;
 
     int delayTime;
+    bool mostrarVisitados;
 
 private:
 

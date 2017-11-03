@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     warning = NULL;
     delayTime = 500;
+    mostrarVisitados = true;
 }
 
 MainWindow::~MainWindow()
@@ -63,6 +64,7 @@ void MainWindow::opciones_accepted(){
     bool newObstaculosAleatorios = opciones->getObstaculosAleatorios();
     int newObstaculosPorcentaje = opciones->getObstaculosPorcentaje();
     int newDelayTime = opciones->getDelayTime();
+    bool newMostrarVisitados = opciones->getMostrarVisitados();
 
     if(gridPoints != newGrid){
         gridPoints = newGrid;
@@ -87,9 +89,11 @@ void MainWindow::opciones_accepted(){
         setObstaculos();
     }
 
-    if(delayTime != newDelayTime){
+    if(delayTime != newDelayTime)
         delayTime = newDelayTime;
-    }
+
+    if(mostrarVisitados != newMostrarVisitados)
+        mostrarVisitados = newMostrarVisitados;
 }
 
 void MainWindow::setGrid(){
@@ -336,7 +340,7 @@ void MainWindow::delay(int msec){
 
 
 void MainWindow::setVisitado(){
-
+    if(!mostrarVisitados){return;}
     if(visitados.size() != 0){
         for(unsigned i = 0; i < visitados.size(); i++)
             delete visitados[i];
