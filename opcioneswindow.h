@@ -22,6 +22,7 @@ public:
     PairPoint getFinPoints();
     bool getObstaculosAleatorios();
     int getObstaculosPorcentaje();
+    int getDelayTime();
 
 private slots:
     void on_buttonBox_accepted();
@@ -42,6 +43,8 @@ private slots:
 
     void on_GridY_valueChanged(int arg1);
 
+    void on_Velocidad_valueChanged(int arg1);
+
 private:
     Ui::OpcionesWindow *ui;
 
@@ -51,6 +54,7 @@ private:
     PairPoint finPoints;
     int obstaculosPorcentaje;
     bool obstaculosAleatorios;
+    int delayTime;
 };
 
 #endif // OPCIONESWINDOW_H

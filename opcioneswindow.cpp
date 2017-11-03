@@ -12,6 +12,7 @@ OpcionesWindow::OpcionesWindow(QWidget *parent) :
     finPoints = PairPoint(9,9);
     obstaculosAleatorios = true;
     obstaculosPorcentaje = 0;
+    delayTime = 500;
 }
 
 OpcionesWindow::~OpcionesWindow()
@@ -33,6 +34,10 @@ bool OpcionesWindow::getObstaculosAleatorios(){
 }
 int OpcionesWindow::getObstaculosPorcentaje(){
     return obstaculosPorcentaje;
+}
+
+int OpcionesWindow::getDelayTime(){
+    return delayTime;
 }
 
 void OpcionesWindow::on_buttonBox_accepted()
@@ -77,4 +82,9 @@ void OpcionesWindow::on_GridX_valueChanged(int arg1)
 void OpcionesWindow::on_GridY_valueChanged(int arg1)
 {
     gridPoints.setY(arg1);
+}
+
+void OpcionesWindow::on_Velocidad_valueChanged(int arg1)
+{
+    delayTime = arg1;
 }

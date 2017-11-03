@@ -79,6 +79,8 @@ private:
 
     std::vector<QGraphicsRectItem*> visitados;
 
+    int delayTime;
+
 private:
 
     void setGrid();

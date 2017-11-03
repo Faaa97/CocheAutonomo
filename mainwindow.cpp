@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setFin();
 
     warning = NULL;
+    delayTime = 500;
 }
 
 MainWindow::~MainWindow()
@@ -61,6 +62,7 @@ void MainWindow::opciones_accepted(){
     PairPoint newFin = opciones->getFinPoints();
     bool newObstaculosAleatorios = opciones->getObstaculosAleatorios();
     int newObstaculosPorcentaje = opciones->getObstaculosPorcentaje();
+    int newDelayTime = opciones->getDelayTime();
 
     if(gridPoints != newGrid){
         gridPoints = newGrid;
@@ -83,6 +85,10 @@ void MainWindow::opciones_accepted(){
             obstaculosp = newObstaculosPorcentaje;
         //volvemos a hacer los obstáculos
         setObstaculos();
+    }
+
+    if(delayTime != newDelayTime){
+        delayTime = newDelayTime;
     }
 }
 
@@ -301,7 +307,6 @@ void MainWindow::on_actionStart_triggered(){
 
     if(caminoMinimo.size() == 0){
         warning = new QMessageBox;
-        //warning->addButton(QMessageBox::Ok,QMessageBox::AcceptRole);
         warning->setStandardButtons(QMessageBox::Ok);
         warning->setIcon(QMessageBox::Warning);
         warning->setText("No hay camino mínimo");
@@ -314,7 +319,7 @@ void MainWindow::on_actionStart_triggered(){
             scene->addRect((*it)->getX()*gridSize,(*it)->getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::magenta), QBrush(Qt::magenta));
         }
         for(std::list<PairPoint*>::reverse_iterator it = caminoMinimo.rbegin(); it != caminoMinimo.rend(); ++it){
-            delay(500);
+            delay(delayTime);
             cochePoints.setX((*it)->getX());
             cochePoints.setY((*it)->getY());
             setCoche();
