@@ -41,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
     warning = NULL;
     delayTime = 500;
     mostrarVisitados = true;
+    lastVisitadosCount = 0;
+    container = NULL;
+    heuristica = 0;
 }
 
 MainWindow::~MainWindow()
@@ -65,6 +68,7 @@ void MainWindow::opciones_accepted(){
     int newObstaculosPorcentaje = opciones->getObstaculosPorcentaje();
     int newDelayTime = opciones->getDelayTime();
     bool newMostrarVisitados = opciones->getMostrarVisitados();
+    int newHeuristica = opciones->getHeuristica();
 
     if(gridPoints != newGrid){
         gridPoints = newGrid;
@@ -83,6 +87,7 @@ void MainWindow::opciones_accepted(){
     if(obstaculosAleatorios != newObstaculosAleatorios || obstaculosp != newObstaculosPorcentaje){
         obstaculosAleatorios = newObstaculosAleatorios;
         obstaculosDefinidos = false;
+
 
         if(obstaculosp != newObstaculosPorcentaje)
             obstaculosp = newObstaculosPorcentaje;
@@ -103,6 +108,9 @@ void MainWindow::opciones_accepted(){
 
     if(mostrarVisitados != newMostrarVisitados)
         mostrarVisitados = newMostrarVisitados;
+
+    if(heuristica != newHeuristica)
+        heuristica = newHeuristica;
 }
 
 void MainWindow::setGrid(){
@@ -135,8 +143,18 @@ void MainWindow::refreshGrid(){
             gridRectangles.push_back(scene->addRect(i*gridSize, j*gridSize, gridSize, gridSize, outlinePen, QBrush(Qt::white)));
             gridNodes.push_back(PairPoint(i,j));
         }
-    for(unsigned i = 0; i < gridRectangles.size(); i++)
+    for(unsigned i = 0; i < gridRectangles.size(); i++){
+        gridRectangles[i]->acceptedMouseButtons();
         gridRectangles[i]->setZValue(GRIDZ);
+    }
+
+    if(container != NULL)
+        delete container;
+
+    container = scene->addRect(0,0, gridSize*gridPoints.getX(), gridSize*gridPoints.getY(), QPen(Qt::black), QBrush(Qt::transparent));
+    container->setZValue(-5);
+    ui->graphicsView->fitInView(container, Qt::KeepAspectRatio);
+
 }
 
 void MainWindow::setInicio(){
@@ -165,10 +183,14 @@ void MainWindow::resizeEvent(QResizeEvent *){
 
 void MainWindow::setObstaculos(){
 
-    if(!obstaculosDefinidos){
+    if(!obstaculosDefinidos && obstaculosAleatorios){
 
         GenerarObstaculos();
         obstaculosDefinidos = true;
+    }
+    else if (!obstaculosDefinidos && !obstaculosAleatorios){
+        ObstaculosFixed();
+        obstaculosDefinidos= true;
     }
     else{
         for(unsigned i = 0; i < obstaculos.size(); i++)
@@ -211,13 +233,29 @@ void MainWindow::GenerarObstaculos(){
             int x = aux/gridPoints.getX();
             int y = aux%gridPoints.getX();
             obstaculosPoints[aux] = PairPoint(x,y);
-            int index = y + x * gridPoints.getX();
+            int index = y + x * gridPoints.getY();
             gridNodes[index].setObstaculo(true);
             cont++;
         }
     }while(cont < numero);
 
 }
+
+void MainWindow::ObstaculosFixed(){
+
+    int values[] = {9,18,27,36,45,54,63,70,25,23,43,67,55,21,81,90,37};
+
+    std::vector<int> aux (values, values + sizeof(values) / sizeof(int) );
+
+    for(unsigned i = 0; i < aux.size(); i++){
+        int x = aux[i]/gridPoints.getX();
+        int y = aux[i]%gridPoints.getX();
+        obstaculosPoints[aux[i]] = PairPoint(x,y);
+        int index = y + x * gridPoints.getY();
+        gridNodes[index].setObstaculo(true);
+    }
+}
+
 
 void MainWindow::on_actionOpciones_triggered()
 {
@@ -234,7 +272,15 @@ std::list<PairPoint*> MainWindow::AStar(){
     openSet.insert(&gridNodes[start]);
     closedSet.clear();
 
-    gridNodes[start].setfScore(manhattanHeuristic(gridNodes[start]));
+    if(heuristica == 0){
+        gridNodes[start].setfScore(manhattanHeuristic(gridNodes[start]));
+    }
+    else if(heuristica == 1){
+        gridNodes[start].setfScore(euclideanHeuristic(gridNodes[start]));
+    }
+    else{
+        gridNodes[start].setfScore(chebyshevHeuristic(gridNodes[start]));
+    }
 
     while(!openSet.empty()){
         PairPoint* current = *openSet.begin();
@@ -275,7 +321,17 @@ std::list<PairPoint*> MainWindow::AStar(){
 
             gridNodes[vecinos[i]].setcameFrom(current);
             gridNodes[vecinos[i]].setgScore(gScoreNew);
-            gridNodes[vecinos[i]].setfScore(gridNodes[vecinos[i]].getgScore() + manhattanHeuristic(gridNodes[vecinos[i]]));
+
+
+            if(heuristica == 0){
+                gridNodes[vecinos[i]].setfScore(gridNodes[vecinos[i]].getgScore() + manhattanHeuristic(gridNodes[vecinos[i]]));
+            }
+            else if(heuristica == 1){
+                gridNodes[vecinos[i]].setfScore(gridNodes[vecinos[i]].getgScore() + euclideanHeuristic(gridNodes[vecinos[i]]));
+            }
+            else{
+                gridNodes[vecinos[i]].setfScore(gridNodes[vecinos[i]].getgScore() + chebyshevHeuristic(gridNodes[vecinos[i]]));
+            }
         }
     }
     return std::list<PairPoint*>(); //lista vacía, por que no hay camino mínimo
@@ -285,6 +341,18 @@ int MainWindow::manhattanHeuristic(PairPoint node){
     int auxX = abs(node.getX() - finPoints.getX());
     int auxY = abs(node.getY() - finPoints.getY());
     return auxX + auxY;
+}
+
+int MainWindow::euclideanHeuristic(PairPoint node){
+    int auxX = abs(node.getX() - finPoints.getX())^2;
+    int auxY = abs(node.getY() - finPoints.getY())^2;
+    return sqrt(auxX + auxY);
+}
+
+int MainWindow::chebyshevHeuristic(PairPoint node){
+    int auxX = abs(node.getX() - finPoints.getX());
+    int auxY = abs(node.getY() - finPoints.getY());
+    return 1 * (auxX + auxY) + (1 - 2 * 1) * std::min(auxX, auxY);
 }
 
 int MainWindow::searchlowestfScore(){
@@ -352,12 +420,9 @@ void MainWindow::delay(int msec){
 
 void MainWindow::setVisitado(){
     if(!mostrarVisitados){return;}
-    if(visitados.size() != 0){
-        for(unsigned i = 0; i < visitados.size(); i++)
-            delete visitados[i];
-        visitados.resize(0);
-    }
-    for(unsigned i = 0; i < visitadosPoints.size(); i++)
+    for(unsigned i = lastVisitadosCount; i < visitadosPoints.size(); i++){
         visitados.push_back(scene->addRect(visitadosPoints[i].getX()*gridSize,visitadosPoints[i].getY()*gridSize,gridSize-1, gridSize-1 ,QPen(Qt::yellow), QBrush(Qt::yellow)));
+        lastVisitadosCount++;
+    }
 
 }

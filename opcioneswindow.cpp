@@ -14,6 +14,7 @@ OpcionesWindow::OpcionesWindow(QWidget *parent) :
     obstaculosPorcentaje = 0;
     delayTime = 500;
     mostrarVisitados = true;
+    heuristica = 0;
 }
 
 OpcionesWindow::~OpcionesWindow()
@@ -43,6 +44,10 @@ int OpcionesWindow::getDelayTime(){
 
 bool OpcionesWindow::getMostrarVisitados(){
     return mostrarVisitados;
+}
+
+int OpcionesWindow::getHeuristica(){
+   return heuristica;
 }
 
 void OpcionesWindow::on_buttonBox_accepted()
@@ -77,6 +82,9 @@ void OpcionesWindow::on_FinY_valueChanged(int arg1)
 void OpcionesWindow::on_PorcentajeObstaculos_valueChanged(int arg1)
 {
     obstaculosPorcentaje = arg1;
+    if(arg1 == -1){
+        obstaculosAleatorios = false;
+    }
 }
 
 void OpcionesWindow::on_GridX_valueChanged(int arg1)
@@ -97,4 +105,9 @@ void OpcionesWindow::on_Velocidad_valueChanged(int arg1)
 void OpcionesWindow::on_checkBox_toggled(bool checked)
 {
     mostrarVisitados = checked;
+}
+
+void OpcionesWindow::on_Heuristic_currentIndexChanged(int index)
+{
+    heuristica = index;
 }

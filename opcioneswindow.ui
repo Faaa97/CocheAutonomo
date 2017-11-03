@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>405</width>
-    <height>228</height>
+    <height>231</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>11</x>
      <y>13</y>
      <width>386</width>
-     <height>208</height>
+     <height>213</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -218,6 +218,45 @@
          </layout>
         </item>
        </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Heurística: </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="Heuristic">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <property name="maxVisibleItems">
+         <number>3</number>
+        </property>
+        <property name="maxCount">
+         <number>3</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Distancia Manhattan</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Distancia Euclídea</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Distancia Chebyshev</string>
+         </property>
+        </item>
+       </widget>
       </item>
      </layout>
     </item>

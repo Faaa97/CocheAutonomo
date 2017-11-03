@@ -23,6 +23,7 @@ public:
     int getObstaculosPorcentaje();
     int getDelayTime();
     bool getMostrarVisitados();
+    int getHeuristica();
 
 private slots:
     void on_buttonBox_accepted();
@@ -47,6 +48,8 @@ private slots:
 
     void on_checkBox_toggled(bool checked);
 
+    void on_Heuristic_currentIndexChanged(int index);
+
 private:
     Ui::OpcionesWindow *ui;
 
@@ -58,6 +61,7 @@ private:
     bool obstaculosAleatorios;
     int delayTime;
     bool mostrarVisitados;
+    int heuristica;
 };
 
 #endif // OPCIONESWINDOW_H

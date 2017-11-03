@@ -9,6 +9,9 @@
 #include <set>
 #include <QTime>
 #include <QMessageBox>
+#include <cmath>    //sqrt
+#include <fstream>
+#include <iostream>
 
 const int GRIDZ = -1;
 const int COCHEZ = 5;
@@ -76,6 +79,10 @@ private:
     int delayTime;
     bool mostrarVisitados;
 
+    int lastVisitadosCount;
+    QGraphicsRectItem* container;
+    int heuristica;
+
 private:
 
     void setGrid();
@@ -88,7 +95,13 @@ private:
 
     void GenerarObstaculos();
 
+    void ObstaculosFixed();
+
     int manhattanHeuristic(PairPoint node);
+    int euclideanHeuristic(PairPoint node);
+    int chebyshevHeuristic(PairPoint node);
+
+
     int searchlowestfScore();
     std::list<PairPoint*> reconstructPath(PairPoint* current);
     void delay(int msec);
