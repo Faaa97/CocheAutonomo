@@ -193,7 +193,6 @@ void MainWindow::GenerarObstaculos(){
             int y = aux%gridPoints.getX();
             obstaculosPoints[aux] = PairPoint(x,y);
             int index = y + x * gridPoints.getX();
-            printf("Haciendo obstáculo en (%d,%d)(%d) [%d,%d]\n",gridNodes[index].getX(),gridNodes[index].getY(),index,x,y);
             gridNodes[index].setObstaculo(true);
             cont++;
         }
@@ -222,8 +221,7 @@ std::list<PairPoint*> MainWindow::AStar(){
         PairPoint* current = *openSet.begin();
         if(current == &gridNodes[fin])
             return reconstructPath(current);
-        printf("Current: (%d,%d)\n",current->getX(),current->getY());
-        printf("Es obstaculo: %d\n",current->esObstaculo());
+
         openSet.erase(current);
         closedSet.insert(current);
 
