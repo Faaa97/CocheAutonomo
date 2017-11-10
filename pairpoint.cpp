@@ -1,4 +1,4 @@
-#include "pairpoint.hpp"
+#include "pairpoint.h"
 
 PairPoint::PairPoint(int x, int y){
     x_ = x;
